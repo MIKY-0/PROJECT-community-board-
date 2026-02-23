@@ -99,7 +99,7 @@ export const mockPostDetailsById = {
         parentId: null,
         nickname: "카리나",
         createdAt: "2025-04-01",
-        content: "오 진짜 럭키비키네",
+        content: "1빠. 댓글고정좀",
         isDeleted: false
       },
       { // 대댓글
@@ -141,8 +141,8 @@ export function getMockPostDetail(postId) {
   const found = mockPostDetailsById[postId];
   if (found) return found;
 
-  // ✅ 상세 데이터가 없으면 목록 데이터라도 기반으로 보여주기
-  const listPost = mockPosts.find((p) => p.postId === postId);
+  //  상세 데이터가 없으면 목록 데이터라도 기반으로 보여주기.
+  const listPost = mockPosts.find( p => p.postId === postId);
 
   if (!listPost) {
     return {
