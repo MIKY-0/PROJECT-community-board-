@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./BoardListPage.css";
-import { mockPosts } from "../mockData/mock";
+import { mockPosts } from "../../mockData/mock";
+import { Link } from "react-router-dom";
 
 export default function BoardListPage() {
   // 검색
@@ -26,8 +27,8 @@ export default function BoardListPage() {
 
   // 3) 페이지네이션
   const totalPages = Math.max(1 , Math.ceil(posts.length / pageSize));
-  const searchPage = Math.min(page , totalPages); // ex. 현재페이지 10 , 검색결과 페이지가 총 2페이지라면 -> 
-  // 10을 2로 강제로 낮춰줌. 
+  const searchPage = Math.min(page , totalPages); // ex. 현재페이지(page) 10 , 검색결과 페이지(여기선 totalPages)가 
+  // 총 2페이지라면 -> 10을 2로 강제로 낮춰줌. 
 
   const startIndex = (searchPage - 1) * pageSize; 
   const pagePosts = posts.slice(startIndex , startIndex + pageSize); // 현재화면에 출력할 목록.
@@ -46,28 +47,19 @@ export default function BoardListPage() {
           게시글 메인화면임
         </p>
       </header>
-
+    
       {/* 검색 */}
-      <form className="searchBox" onSubmit={onSearch}>
-        <select
-          className="searchSelect"
-          value={searchField}
-          onChange={(e) => setSearchField(e.target.value)}
-        >
+      {/* form : 입력값들을 묶어서 한번에 처리. 엔터 -> 자동으로 제출. 버튼클릭이벤트 다 작성할 필요 X. */}
+      <form className="searchBox" onSubmit={onSearch}> 
+        <select className="searchSelect" value={searchField} onChange={ e => setSearchField(e.target.value)}>
           <option value="title">제목</option>
           <option value="author">작성자</option>
         </select>
 
-        <input
-          className="searchInput"
-          value={keyword}
-          onChange={ e => setKeyword(e.target.value)}
-          placeholder="검색어 입력"
-        />
+        <input className="searchInput" value={keyword} onChange={ e => setKeyword(e.target.value)} 
+        placeholder="검색어 입력"/>
 
-        <button className="searchBtn" type="submit">
-          검색
-        </button>
+        <button className="searchBtn" type="submit">검색</button>
       </form>
 
       {/* 목록 테이블 */}
@@ -94,17 +86,17 @@ export default function BoardListPage() {
               </tr>
             ) : 
             (
-              pagePosts.map((p) => ( // pagePosts가 n개면 -> <tr>행도 n개 생성.
+              pagePosts.map( p => ( // pagePosts가 n개면 -> <tr>행도 n개 생성.
                 <tr key={p.postId} className="row">
                   <td className="no">{p.postId}</td>
 
                   <td className="title">
-                    <a className="titleLink" href={`/posts/${p.postId}`}>
+                    <Link className="titleLink" to={`/posts/${p.postId}`}>
                       {p.title}
                       {p.commentCount > 0 && ( // 댓글0개면 안보임.
                         <span className="commentBadge">[{p.commentCount}]</span>
                       )}
-                    </a>
+                    </Link>
                   </td>
 
                   <td className="author">{p.nickname}</td>
@@ -121,39 +113,26 @@ export default function BoardListPage() {
       {/* 페이지네이션 */}
       <div className="boardFooter">
         <div className="pagination">
-          <button
-            className="pageBtn"
-            type="button"
-            disabled={searchPage === 1}
-            onClick={() => setPage(searchPage - 1)}
-          >
+          <button className="pageBtn" type="button" disabled={searchPage === 1} onClick={() => setPage(searchPage - 1)}>
             이전
           </button>
 
           {Array.from({ length: totalPages } , (_ , i) => i + 1).map( p => (
-            <button
-              key={p}
-              className={`pageNum ${p === searchPage ? "active" : ""}`}
-              type="button"
-              onClick={() => setPage(p)}
-            >
+            <button key={p} className={`pageNum ${p === searchPage ? "active" : ""}`} type="button"
+            onClick={() => setPage(p)}>
               {p}
             </button>
           ))}
 
-          <button
-            className="pageBtn"
-            type="button"
-            disabled={searchPage === totalPages}
-            onClick={() => setPage(searchPage + 1)}
-          >
+          <button className="pageBtn" type="button" disabled={searchPage === totalPages}
+          onClick={() => setPage(searchPage + 1)}>
             다음
           </button>
         </div>
 
-        <a className="writeBtn" href="/posts/new">
+        <Link className="writeBtn" to="/posts/new">
           글쓰기
-        </a>
+        </Link>
       </div>
     </div>
   );
