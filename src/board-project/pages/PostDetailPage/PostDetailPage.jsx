@@ -171,7 +171,11 @@ export default function PostDetailPage() {
               .map( f => (
                 <li key={f.id} className="attachItem">
                   <span className="fileName">{f.originalFileName}</span>
+                  
+                  {/* target="_blank" : 링크를 타고 새 페이지로 이동. 
+                  rel="noreferrer" : 사이트주소를 악성사이트 주소로 바꿔버릴 수 있기때문에 보안상 있어야함. */}
                   <a className="downloadBtn" href={f.fileUrl} target="_blank" rel="noreferrer">
+                    
                     다운로드
                   </a>
                 </li>
@@ -197,7 +201,7 @@ export default function PostDetailPage() {
 
         <div className="commentList">
           {commentList.length === 0 ? ( // 댓글개수가 0개면?
-            <div className="emptyBox">첫 댓글을 작성해보세요.</div>
+            <div className="emptyBox">이 게시물에 댓글이 없습니다.</div>
           ) 
           : 
           ( // 댓글n개가 달려있다면 그 댓글들을 하나씩 꺼내서 n개의 CommentItem으로 생성.
@@ -222,14 +226,7 @@ export default function PostDetailPage() {
 }
 
 function CommentItem({
-  comment,
-  depth,
-  replyTo,
-  setReplyTo,
-  replyInput,
-  setReplyInput,
-  handleAddReply,
-  handleDeleteComment,
+  comment , depth , replyTo , setReplyTo , replyInput , setReplyInput , handleAddReply , handleDeleteComment
 }) {
   const isReplying = replyTo === comment.commentId;
 
