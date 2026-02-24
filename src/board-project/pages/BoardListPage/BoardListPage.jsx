@@ -13,7 +13,7 @@ export default function BoardListPage() {
   const pageSize = 10;
 
   // 최신순 정렬(posts에 복사)
-  let posts = [...mockPosts].sort( (a, b) => b.postId - a.postId);
+  let posts = [...mockPosts].sort( (a , b) => b.postId - a.postId);
 
   // 검색 필터
   const k = keyword.trim().toLowerCase();
@@ -67,7 +67,7 @@ export default function BoardListPage() {
         <table className="boardTable">
           <thead>
             <tr>
-              <th className="colNo">번호</th>
+              <th className="colNum">번호</th>
               <th className="colTitle">제목</th>
               <th className="colAuthor">작성자</th>
               <th className="colDate">작성일</th>

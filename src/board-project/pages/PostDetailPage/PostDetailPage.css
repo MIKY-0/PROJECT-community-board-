@@ -1,16 +1,10 @@
 /* src/pages/PostDetailPage.css */
 
-.postWrap {
+.postPage {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 30px 16px 60px;
-}
-
-.topBar {
-  display: flex;
-  align-items: center;
-  margin-bottom: 14px;
 }
 
 .backBtn {
@@ -41,14 +35,14 @@
   letter-spacing: -0.02em;
 }
 
-.postMetaRow {
+.postRow {
   display: flex;
   justify-content: space-between;
   gap: 14px;
   flex-wrap: wrap;
 }
 
-.postMetaLeft {
+.postLeft {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -92,7 +86,7 @@
   border-radius: 999px;
 }
 
-.postMetaRight {
+.postRight {
   display: flex;
   align-items: center;
   gap: 10px;

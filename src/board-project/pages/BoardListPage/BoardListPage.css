@@ -105,7 +105,7 @@
   background: #fbfbfb;
 }
 
-.colNo { width: 80px; text-align: center; }
+.colNum { width: 80px; text-align: center; }
 .colAuthor { width: 140px; text-align: center; }
 .colDate { width: 120px; text-align: center; }
 .colView { width: 80px; text-align: center; }

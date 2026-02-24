@@ -1,5 +1,5 @@
 export const mockPosts = [
-  {
+  { // 목록 응답 dto
     postId: 1,
     title: "럭키비키",
     nickname: "장원영",

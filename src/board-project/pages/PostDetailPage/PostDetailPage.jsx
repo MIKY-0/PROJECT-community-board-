@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./PostDetailPage.css";
 import { getMockPostDetail } from "../../mockData/mock";
 
-function buildCommentTree(flatComments) {
+function commentAll(flatComments) {
   const map = new Map();
   const roots = [];
 
@@ -26,12 +26,13 @@ function formatDate(dateStr) {
 export default function PostDetailPage() {
   const { postId } = useParams();
   const navigate = useNavigate();
-  const pid = useMemo( () => Number(postId) , [postId]);
-  const [post, setPost] = useState(() => getMockPostDetail(pid));
+  const pid = useMemo( () => Number(postId) , [postId]); // postId의 변환이 있을때 시행. -> 여기서 성능 최적화보단 postId변화에만 
+  // 시행하겠다는 의도를 나타내려고. 
+  const [post, setPost] = useState( () => getMockPostDetail(pid)); // 초기값만 설정.
 
-  // 좋아요는 자주 바뀌므로 state로 따로 저장해서 관리.
-  const [isLiked, setIsLiked] = useState(post.isLiked);
-  const [likeCount, setLikeCount] = useState(post.likeCount);
+  // 좋아요는 자주 조작되므로 state로 따로 저장해서 관리. 
+  const [like, setLike] = useState(post.isLiked);
+  const [likeCount, setLikeCount] = useState( () => Number(post.likeCount) || 0);
 
   // 댓글입력.
   const [commentInput, setCommentInput] = useState("");
@@ -42,17 +43,17 @@ export default function PostDetailPage() {
   // 대댓글 입력.
   const [replyInput, setReplyInput] = useState("");
 
-  const commentTree = useMemo(() => buildCommentTree(post.comments), [post.comments]);
+  const commentList = useMemo(() => commentAll(post.comments), [post.comments]);
 
-  const onToggleLike = () => { // 좋아요 클릭했을때.
-    setIsLiked( prev => { // 이전값을 들고와서(내가 좋아요가 눌린 상태인지 , 눌려있지 않은 상태인지를 가져옴.)
+  const handleClickLike = () => { // 좋아요 클릭했을때.
+    setLike( prev => { // 이전값을 들고와서(내가 좋아요가 눌린 상태인지 , 눌려있지 않은 상태인지를 가져옴.)
       const next = !prev;  // 좋아요가 눌려있었다면(true) false로 , 안눌려있었다면(false) true로 변환.
       setLikeCount( c => (next ? c + 1 : Math.max(0 , c - 1))); // true면 좋아요수 +1 , false면 -1.
       return next; // 이 결과를 새로 저장.
     });
   };
 
-  const onAddComment = e => {
+  const handleAddComment = e => {
     e.preventDefault();
     const content = commentInput.trim(); // 공백만 있는 댓글은 등록 안하는 규칙.
     if (!content) return; // content가 빈문자열이면 무시(return)
@@ -75,7 +76,7 @@ export default function PostDetailPage() {
     setCommentInput(""); // 댓글 입력하고 등록했으면 다시 댓글입력창을 비워줌.
   };
 
-  const onAddReply = e => {
+  const handleAddReply = e => {
     e.preventDefault();
     const content = replyInput.trim();
     if (!content || replyTo == null) return; // 입력한 대댓글이 빈문자열 || 대댓글 대상(replyTo)이 없으면 무시.(return)
@@ -98,7 +99,7 @@ export default function PostDetailPage() {
     // 대댓글들도 안보임.
   };
 
-  const onDeleteCommentMock = commentId => {
+  const handleDeleteComment = commentId => {
     setPost( prev => ({
       ...prev,
       comments : prev.comments.map( c => // 게시글에 달린 댓글들만 순회.
@@ -108,22 +109,19 @@ export default function PostDetailPage() {
   };
 
   return (
-    <div className="postWrap">
-      <div className="topBar">
-        <button className="backBtn" type="button" onClick={() => navigate(-1)}>
-          ← 뒤로
-        </button>
+    <div className="postPage">
+      <div className="topButtons">
 
-        <button className="backBtn" type="button" onClick={() => navigate("/")}>
-          목록
+        <button className="backBtn" type="button" onClick={ () => navigate("/")}>
+          목록으로
         </button>
       </div>
 
       <header className="postHeader">
         <h1 className="postTitle">{post.title}</h1>
 
-        <div className="postMetaRow">
-          <div className="postMetaLeft">
+        <div className="postRow">
+          <div className="postLeft">
             <div className="author">
               <div className="avatar" aria-hidden />
               <span className="nickname">{post.nickname}</span>
@@ -137,7 +135,7 @@ export default function PostDetailPage() {
             </div>
           </div>
 
-          <div className="postMetaRight">
+          <div className="postRight">
             <div className="stats">
               <span className="stat">조회 {post.viewCount}</span>
               <span className="stat">댓글 {post.commentCount}</span>
@@ -146,10 +144,10 @@ export default function PostDetailPage() {
 
             <button
               type="button"
-              className={`likeBtn ${isLiked ? "active" : ""}`}
-              onClick={onToggleLike}
+              className={`likeBtn ${like ? "active" : ""}`}
+              onClick={handleClickLike}
             >
-              {isLiked ? "♥ 좋아요" : "♡ 좋아요"}
+              {like ? "♥ 좋아요" : "♡ 좋아요"}
             </button>
           </div>
         </div>
@@ -164,11 +162,13 @@ export default function PostDetailPage() {
 
         {post.attachments.length === 0 ? (
           <div className="emptyBox">첨부파일이 없습니다.</div>
-        ) : (
+        ) 
+        : 
+        (
           <ul className="attachList">
             {[...post.attachments]
-              .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
-              .map((f) => (
+              .sort( (a , b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+              .map( f => (
                 <li key={f.id} className="attachItem">
                   <span className="fileName">{f.originalFileName}</span>
                   <a className="downloadBtn" href={f.fileUrl} target="_blank" rel="noreferrer">
@@ -183,11 +183,11 @@ export default function PostDetailPage() {
       <section className="commentSection">
         <div className="sectionTitle">댓글</div>
 
-        <form className="commentForm" onSubmit={onAddComment}>
+        <form className="commentForm" onSubmit={handleAddComment}>
           <textarea
             className="commentInput"
             value={commentInput}
-            onChange={(e) => setCommentInput(e.target.value)}
+            onChange={ e => setCommentInput(e.target.value)}
             placeholder="댓글을 입력하세요"
           />
           <button className="commentSubmit" type="submit">
@@ -196,10 +196,12 @@ export default function PostDetailPage() {
         </form>
 
         <div className="commentList">
-          {commentTree.length === 0 ? (
+          {commentList.length === 0 ? ( // 댓글개수가 0개면?
             <div className="emptyBox">첫 댓글을 작성해보세요.</div>
-          ) : (
-            commentTree.map((c) => (
+          ) 
+          : 
+          ( // 댓글n개가 달려있다면 그 댓글들을 하나씩 꺼내서 n개의 CommentItem으로 생성.
+            commentList.map( c => (
               <CommentItem
                 key={c.commentId}
                 comment={c}
@@ -208,8 +210,8 @@ export default function PostDetailPage() {
                 setReplyTo={setReplyTo}
                 replyInput={replyInput}
                 setReplyInput={setReplyInput}
-                onAddReply={onAddReply}
-                onDelete={onDeleteCommentMock}
+                handleAddReply={handleAddReply}
+                handleDeleteComment={handleDeleteComment}
               />
             ))
           )}
@@ -226,8 +228,8 @@ function CommentItem({
   setReplyTo,
   replyInput,
   setReplyInput,
-  onAddReply,
-  onDelete,
+  handleAddReply,
+  handleDeleteComment,
 }) {
   const isReplying = replyTo === comment.commentId;
 
@@ -252,7 +254,7 @@ function CommentItem({
             <button
               type="button"
               className="linkBtn danger"
-              onClick={() => onDelete(comment.commentId)}
+              onClick={() => handleDeleteComment(comment.commentId)}
             >
               삭제
             </button>
@@ -264,7 +266,7 @@ function CommentItem({
         </div>
 
         {isReplying && (
-          <form className="replyForm" onSubmit={onAddReply}>
+          <form className="replyForm" onSubmit={handleAddReply}>
             <textarea
               className="replyInput"
               value={replyInput}
@@ -294,8 +296,8 @@ function CommentItem({
               setReplyTo={setReplyTo}
               replyInput={replyInput}
               setReplyInput={setReplyInput}
-              onAddReply={onAddReply}
-              onDelete={onDelete}
+              handleAddReply={handleAddReply}
+              handleDeleteComment={handleDeleteComment}
             />
           ))}
         </div>
