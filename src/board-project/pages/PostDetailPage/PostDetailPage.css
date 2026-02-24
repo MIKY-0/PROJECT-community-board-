@@ -54,14 +54,14 @@
   gap: 8px;
 }
 
-.avatar {
+.profile {
   width: 34px;
   height: 34px;
   border-radius: 999px;
   background: #eee;
 }
 
-.avatar.small {
+.profile.small {
   width: 26px;
   height: 26px;
 }

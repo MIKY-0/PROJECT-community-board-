@@ -43,7 +43,7 @@ export default function PostDetailPage() {
   // 대댓글 입력.
   const [replyInput, setReplyInput] = useState("");
 
-  const commentList = useMemo(() => commentAll(post.comments), [post.comments]);
+  const commentList = useMemo(() => commentAll(post.comments) , [post.comments]);
 
   const handleClickLike = () => { // 좋아요 클릭했을때.
     setLike( prev => { // 이전값을 들고와서(내가 좋아요가 눌린 상태인지 , 눌려있지 않은 상태인지를 가져옴.)
@@ -123,7 +123,7 @@ export default function PostDetailPage() {
         <div className="postRow">
           <div className="postLeft">
             <div className="author">
-              <div className="avatar" aria-hidden />
+              <div className="profile" aria-hidden />
               <span className="nickname">{post.nickname}</span>
             </div>
 
@@ -238,7 +238,7 @@ function CommentItem({
       <div className="commentCard">
         <div className="commentTop">
           <div className="commentAuthor">
-            <div className="avatar small" aria-hidden />
+            <div className="profile small" aria-hidden />
             <span className="nickname">{comment.nickname}</span>
             <span className="commentDate">{comment.createdAt}</span>
           </div>
@@ -247,14 +247,14 @@ function CommentItem({
             <button
               type="button"
               className="linkBtn"
-              onClick={() => setReplyTo(isReplying ? null : comment.commentId)}
+              onClick={ () => setReplyTo(isReplying ? null : comment.commentId)}
             >
               답글
             </button>
             <button
               type="button"
               className="linkBtn danger"
-              onClick={() => handleDeleteComment(comment.commentId)}
+              onClick={ () => handleDeleteComment(comment.commentId)}
             >
               삭제
             </button>
@@ -270,14 +270,14 @@ function CommentItem({
             <textarea
               className="replyInput"
               value={replyInput}
-              onChange={(e) => setReplyInput(e.target.value)}
+              onChange={ e => setReplyInput(e.target.value)}
               placeholder="답글을 입력하세요"
             />
             <div className="replyBtns">
               <button className="replySubmit" type="submit">
                 등록
               </button>
-              <button className="replyCancel" type="button" onClick={() => setReplyTo(null)}>
+              <button className="replyCancel" type="button" onClick={ () => setReplyTo(null)}>
                 취소
               </button>
             </div>
@@ -287,11 +287,11 @@ function CommentItem({
 
       {comment.children?.length > 0 && (
         <div className="commentChildren">
-          {comment.children.map((child) => (
+          {comment.children.map( child => (
             <CommentItem
               key={child.commentId}
               comment={child}
-              depth={Math.min(6, depth + 1)}
+              depth={Math.min(6 , depth + 1)}
               replyTo={replyTo}
               setReplyTo={setReplyTo}
               replyInput={replyInput}
