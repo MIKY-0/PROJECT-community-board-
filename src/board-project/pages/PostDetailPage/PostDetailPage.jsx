@@ -26,8 +26,7 @@ function formatDate(dateStr) {
 export default function PostDetailPage() {
   const { postId } = useParams();
   const navigate = useNavigate();
-  const pid = useMemo( () => Number(postId) , [postId]); // postId의 변환이 있을때 시행. -> 여기서 성능 최적화보단 postId변화에만 
-  // 시행하겠다는 의도를 나타내려고. 
+  const pid = Number(postId);
   const [post, setPost] = useState( () => getMockPostDetail(pid)); // 초기값만 설정.
 
   // 좋아요는 자주 조작되므로 state로 따로 저장해서 관리. 
