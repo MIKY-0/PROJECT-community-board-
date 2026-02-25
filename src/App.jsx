@@ -14,7 +14,7 @@ export default function App() {
         {/* 상세 */}
         <Route path="/posts/:postId" element={<PostDetailPage />} />
 
-        {/* (옵션) 글쓰기: 아직 안 만들었으면 임시로 목록으로 보내기 */}
+        {/* (옵션) 글쓰기: 아직 안 만들어서 임시로 목록으로 보내기 */}
         <Route path="/posts/new" element={<Navigate to="/" replace />} />
 
         {/* 그 외 경로: 모두 목록으로 */}
