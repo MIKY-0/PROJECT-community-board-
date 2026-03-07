@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import PostDetailPage from "./board-project/pages/PostDetailPage/PostDetailPage";
 import BoardListPage from "./board-project/pages/BoardListPage/BoardListPage";
+import PostWritePage from "./board-project/pages/PostWritePage/PostWritePage";
+import PostUpdatePage from "./board-project/pages/PostUpdatePage/PostUpdatePage";
 
 export default function App() {
   return (
@@ -14,8 +16,11 @@ export default function App() {
         {/* 상세 */}
         <Route path="/posts/:postId" element={<PostDetailPage />} />
 
-        {/* (옵션) 글쓰기: 아직 안 만들어서 임시로 목록으로 보내기 */}
-        <Route path="/posts/new" element={<Navigate to="/" replace />} />
+        {/* 작성 */}
+        <Route path="/posts/new" element={<PostWritePage />} />
+
+        {/* 수정 */}
+        <Route path="/posts/:postId/edit" element={<PostUpdatePage />} />
 
         {/* 그 외 경로: 모두 목록으로 */}
         <Route path="*" element={<Navigate to="/" replace />} />

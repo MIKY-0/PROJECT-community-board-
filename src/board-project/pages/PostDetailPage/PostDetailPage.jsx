@@ -132,6 +132,21 @@ export default function PostDetailPage() {
     await loadComments(); // 최신 댓글목록으로 업데이트.
   };
 
+  const handleDeletePost = async () => {
+    const ok = window.confirm("정말 이 게시글을 삭제하시겠습니까?"); // ok는 boolean값임.
+    if(!ok) return;
+
+    try {
+      const res = await fetch(`http://localhost:8080/posts/${pid}` , {
+        method : "DELETE"
+      });
+
+      if(!res.ok) throw new Error("게시글 삭제 실패 : " + res.status);
+      alert("게시글이 삭제되었습니다.");
+      navigate("/");
+    } catch (e) { alaert(e.message); }
+  }
+
   // async 함수가 있으니까 화면 불러오는 동안 post는 null -> null이면 error가 뜸. -> 아래 코드를 넣어서 null이어도 화면 오류가 안뜨게 방지. 
   if (loading) return <div className="postPage"><div className="emptyBox">불러오는 중...</div></div>;
   if (error) return <div className="postPage"><div className="emptyBox">에러: {error}</div></div>;
@@ -140,11 +155,18 @@ export default function PostDetailPage() {
   return (
     <div className="postPage">
       <div className="topButtons">
-
         <button className="backBtn" type="button" onClick={ () => navigate("/")}>
           목록으로
         </button>
+
+        <button className="editBtn" type="button" onClick={ () => navigate(`/posts/${pid}/edit`)}>
+          수정하기
+        </button>
       </div>
+
+      <button className="deleteBtn" onClick={handleDeletePost}>
+        삭제하기
+      </button>
 
       <header className="postHeader">
         <h1 className="postTitle">{post.title}</h1>

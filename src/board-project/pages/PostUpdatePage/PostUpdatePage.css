@@ -1,0 +1,131 @@
+.editPage {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+  color: #222;
+}
+
+.editTop {
+  margin-bottom: 20px;
+}
+
+.backBtn {
+  border: 1px solid #d0d7de;
+  background: #fff;
+  color: #222;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.backBtn:hover {
+  background: #f5f7fa;
+}
+
+.editCard {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+.editTitle {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.editSubtitle {
+  margin: 10px 0 24px;
+  color: #666;
+  font-size: 14px;
+}
+
+.editForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #333;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  border: 1px solid #d0d7de;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 15px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: #4f46e5;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 260px;
+  line-height: 1.6;
+}
+
+.buttonRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancelBtn,
+.submitBtn {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cancelBtn {
+  background: #e5e7eb;
+  color: #222;
+}
+
+.cancelBtn:hover {
+  background: #d1d5db;
+}
+
+.submitBtn {
+  background: #111827;
+  color: #fff;
+}
+
+.submitBtn:hover {
+  background: #1f2937;
+}
+
+.cancelBtn:disabled,
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.emptyBox {
+  padding: 40px;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #fff;
+}

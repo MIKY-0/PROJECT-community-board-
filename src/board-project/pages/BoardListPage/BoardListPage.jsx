@@ -157,7 +157,7 @@ export default function BoardListPage() {
         </div>
 
         <Link className="writeBtn" to="/posts/new">
-          글쓰기
+          게시글 작성하기
         </Link>
       </div>
     </div>
