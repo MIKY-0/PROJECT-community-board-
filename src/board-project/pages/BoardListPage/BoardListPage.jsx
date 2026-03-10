@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./BoardListPage.css";
 import { Link } from "react-router-dom";
+import { getJson } from "../../api/api";
 
 export default function BoardListPage() {
   // 검색.
@@ -34,9 +35,15 @@ export default function BoardListPage() {
         if(query.keyword.trim() !== "") {
           url += `&field=${query.field}&keyword=${encodeURIComponent(query.keyword)}`;
         }
-        const res = await fetch(url);
-        if(!res.ok) throw new Error("서버 응답 에러 : " + res.status); // res.ok : 200번대라면 -> true / 아니면(404,500) -> false.
-        const data = await res.json(); // 백엔드에서 받은 JSON 문자열을 JS객체로 변환.
+        
+        // api에 만든 요청시 error처리로 보냄.
+        const path = query.keyword.trim() !== "" ? // 검색어가 있으면 true , 없으면 false.
+    // encodeURIComponent : "안 녕" 이렇게 문자사이 공백 있으면 깨질수 있는데 공백조차도 문자열로 바꿔줘서 안전하게 방지. 
+        `/posts?page=${page}&size=${pageSize}&field=${query.field}&keyword=${encodeURIComponent(query.keyword)}`
+        :
+        `/posts?page=${page}&size=${pageSize}`; // 검색어 없으니 그냥 기본 목록 조회.
+
+        const data = await getJson(path);
 
         // 백엔드가 PostListResDto로 보내줌 -> data.posts가 null이면 []로 반환 아니면 그대로 data.posts반환. 그래야 이상한 오류 안생김.
         setPosts(data.posts || []);

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./PostWritePage.css";
+import { sendJson } from "../../api/api";
 
 export default function PostWritePage() {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ export default function PostWritePage() {
   const [loading , setLoading] = useState(false);
   const [error , setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => { // 게시글 등록.
     e.preventDefault();
     const trimmedTitle = title.trim();
     const trimmedContent = content.trim();
@@ -27,17 +28,9 @@ export default function PostWritePage() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:8080/posts" , {
-        method : "POST" ,
-        headers : {"Content-Type" : "application/json"} ,
-        body : JSON.stringify({
-          title : trimmedTitle ,
-          content : trimmedContent
-        })
-      });
-      
-      if(!res.ok) throw new Error("게시글 등록 실패 : " + res.status);
-      const data = await res.json();
+     await sendJson(`/posts` , "POST" , {
+      title : trimmedTitle , content : trimmedContent
+     });
       navigate("/"); // 등록 성공 후 게시글목록으로.
     } catch (e) {setError(e.message);}
     finally {setLoading(false);}

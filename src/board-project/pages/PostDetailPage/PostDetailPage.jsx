@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./PostDetailPage.css";
+import { deleteJson, getJson, sendJson } from "../../api/api";
 
 function commentAll(flatComments) { // 평평한 댓글간에 부모-자식 댓글 트리구조로 바꿔즈는 함수. 
   const map = new Map();
@@ -30,13 +31,14 @@ export default function PostDetailPage() {
   const [loading , setLoading] = useState(false);
   const [error , setError] = useState("");
 
-  // 백엔드에서 댓글 가져오기. + 최신 댓글목록으로 업데이트.
+  // 댓글 get요청. 에러 발생시 getJson에서 알아서 처리. 
   const loadComments = async () => {
-    const res = await fetch(`http://localhost:8080/posts/${pid}/comments`);
-    if(!res.ok) throw new Error("댓글 불러오기 실패 : " + res.status);
-    const data = await res.json();
-    setPost( prev => prev ? ({...prev , comments : data , commentCount : data.length}) : prev);
-  }
+    const data = await getJson(`/posts/${pid}/comments`);
+
+    // commentCount. deleted가 false인 애들은 제외시키고 count함.
+    const aliveCount = data.filter( c => !c.deleted).length;
+    setPost( prev => prev ? ({...prev , comments : data , commentCount : aliveCount}) : prev);
+  };
 
   // 좋아요는 자주 조작되므로 state로 따로 저장해서 관리. 
   const [like, setLike] = useState(false);
@@ -45,7 +47,7 @@ export default function PostDetailPage() {
   // 댓글입력.
   const [commentInput, setCommentInput] = useState("");
 
-  // 대댓글모드.
+  // 대댓글달려는 부모id.
   const [replyTo, setReplyTo] = useState(null);
 
   // 대댓글 입력.
@@ -57,9 +59,7 @@ export default function PostDetailPage() {
       setError("");
       try { // 게시글 가져오기 실행.
         // ${pid}떄문에 ``(백틱) 써줘야함. "" 써주면 에러. --> 이거때문에 에러 생겼음.
-        const res = await fetch(`http://localhost:8080/posts/${pid}`);
-        if(!res.ok) throw new Error("서버 에러 : " + res.status);
-        const data = await res.json();
+        const data = await getJson(`/posts/${pid}`);
         setPost(data); // 게시글 가져오기.
         await loadComments(); // 그 게시글의 댓글 가져오기.
         setLike(!!data.liked); // truthy(1,"1"...)는 true로 falsy(null,undefined,Nan...)는 false로 강제변환.
@@ -82,9 +82,8 @@ export default function PostDetailPage() {
       const method = like ? "DELETE" : "POST"; // like가 true인 상태에서 클릭했으면 false로 변환되니까 DELETE 보냄.
 
       // method가 DELETE라면 -> DELETE/posts/1/like. 이렇게 보냄.
-      const res = await fetch(`http://localhost:8080/posts/${pid}/like` , {method}); // res보내고 받을때까지 기다리자.
-      if(!res.ok) throw new Error("좋아요 처리 실패 : " + res.status);
-      const data = await res.json(); // 받은 res를 JS객체로 바꿀때까지 기다리자.
+      const data = await sendJson(`/posts/${pid}/like` , method); // sendJson은 body없어도 가능하게 설계했음. 
+      // -> 좋아요는 body가 없다.
       setLike(!!data.liked);
       setLikeCount(data.likeCount);
     } catch (e) { alert(e.message); }
@@ -95,15 +94,13 @@ export default function PostDetailPage() {
     const content = commentInput.trim(); // 공백만 있는 댓글은 등록 안하는 규칙.
     if (!content) return; // content가 빈문자열(false)이면 무시.(return)
 
-    const res = await fetch(`http://localhost:8080/posts/${pid}/comments` , {
-      method : "POST",
-      headers : {"Content-Type" : "application/json"} , // 이 데이터가 json이라는걸 알려주려고 사용.
-      body : JSON.stringify({content , parentId : null})
-    });
-    if(!res.ok) return alert("댓글 등록 실패 : " + res.status);
-    
-    setCommentInput(""); // 댓글 입력하고 등록했으면 다시 댓글입력창을 비워줌.
-    await loadComments(); // 최신 댓글목록으로 업데이트.
+    try {
+      await sendJson(`/posts/${pid}/comments` , "POST" , {
+        content , parentId : null
+      });
+      setCommentInput("");  // 댓글 입력하고 등록했으면 다시 댓글입력창을 비워줌.
+      await loadComments(); // 최신 댓글목록으로 업데이트.
+    } catch(e) { alert(e.message); }
   };
 
   const handleAddReply = async (e) => {
@@ -111,40 +108,34 @@ export default function PostDetailPage() {
     const content = replyInput.trim();
     if (!content || replyTo == null) return; // 입력한 대댓글이 빈문자열 || 대댓글 대상(replyTo)이 없으면 무시.(return)
 
-    const res = await fetch(`http://localhost:8080/posts/${pid}/comments` , {
-      method : "POST" ,
-      headers : {"Content-Type" : "application/json"} , 
-      body : JSON.stringify({content , parentId : replyTo})
-    });
-    if(!res.ok) return alert("대댓글 등록 실패 : " + res.status);
-  
-    setReplyInput("");
+    try {
+      await sendJson(`/posts/${pid}/comments` , "POST" , {
+        content , parentId : replyTo
+      });
+       setReplyInput("");
     setReplyTo(null); // replyTo를 다시 null로 설정해야 대댓글모드가 종료됨. -> 엉뚱한 부모에 대댓글 달리는 이유도 없고 볼 필요 없는 
     // 대댓글들도 안보임.
     await loadComments(); // 최신 댓글목록으로 업데이트.
+    } catch(e) { alert(e.message); }
   };
 
   const handleDeleteComment = async (commentId) => { // 댓글 삭제.
-    const res = await fetch(`http://localhost:8080/comments/${commentId}` , {
-      method : "DELETE" 
-    });
-    if(!res.ok) return alert("댓글 삭제 실패 : " + res.status);
-    await loadComments(); // 최신 댓글목록으로 업데이트.
+    try {
+       await deleteJson(`/comments/${commentId}`);
+       await loadComments(); // 최신 댓글목록으로 업데이트.
+    } catch(e) { alert(e.message); }
+    
   };
 
-  const handleDeletePost = async () => {
+  const handleDeletePost = async () => { // 게시글 삭제.
     const ok = window.confirm("정말 이 게시글을 삭제하시겠습니까?"); // ok는 boolean값임.
     if(!ok) return;
 
     try {
-      const res = await fetch(`http://localhost:8080/posts/${pid}` , {
-        method : "DELETE"
-      });
-
-      if(!res.ok) throw new Error("게시글 삭제 실패 : " + res.status);
+      await deleteJson(`/posts/${pid}`);
       alert("게시글이 삭제되었습니다.");
       navigate("/");
-    } catch (e) { alaert(e.message); }
+    } catch (e) { alert(e.message); }
   }
 
   // async 함수가 있으니까 화면 불러오는 동안 post는 null -> null이면 error가 뜸. -> 아래 코드를 넣어서 null이어도 화면 오류가 안뜨게 방지. 

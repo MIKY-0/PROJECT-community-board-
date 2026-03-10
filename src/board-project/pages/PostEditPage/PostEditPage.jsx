@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { getJson, sendJson } from "../../api/api";
 
 export default function PostEditPage() {
   const {postId} = useParams();
@@ -12,15 +13,13 @@ export default function PostEditPage() {
   const [saving , setSaving] = useState(false);
   const [error , setError] = useState("");
 
-  useEffect( () => {
+  useEffect( () => { // 수정할 기존 게시글 조회.
     const loadPost = async () => {
       setLoading(true);
       setError("");
 
-      try {
-        const res = await fetch(`http://localhost:8080/posts/${pid}`);
-        if(!res.ok) throw new Error("게시글 조회 실패 : " + res.status);
-        const data = await res.json(); 
+      try { 
+        const data = await getJson(`/posts/${pid}`);
         setTitle(data.title || ""); // title없으면 빈문자열로.
         setContent(data.content || "");
       } catch (e) {setError(e.message);}
@@ -29,7 +28,7 @@ export default function PostEditPage() {
     loadPost();
   } , [pid]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => { // 게시글 수정.
     e.preventDefault();
     const trimmedTitle = title.trim(); // trim해줘야 공백만 입력한 경우를 거를수 있음.
     const trimmedContent = content.trim();
@@ -40,17 +39,10 @@ export default function PostEditPage() {
     setSaving(true);
     setError("");
  
-    try {
-      const res = await fetch(`http://localhost:8080/posts/${pid}` , {
-        method : "PUT" ,
-        headers : {"Content-Type" : "application/json"} ,
-        body : JSON.stringify({
-          title : trimmedTitle ,
-          content : trimmedContent
-        })
-      });
-
-      if(!res.ok) throw new Error("게시글 수정 실패 : " + res.status);
+    try { 
+    await sendJson(`/posts/${pid}` , "PUT" , {
+      title : trimmedTitle , content : trimmedContent
+    });
       navigate(`/posts/${pid}`);
     } catch (e) { setError(e.message); }
     finally { setSaving(false); }

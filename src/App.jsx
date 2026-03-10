@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import PostDetailPage from "./board-project/pages/PostDetailPage/PostDetailPage";
 import BoardListPage from "./board-project/pages/BoardListPage/BoardListPage";
 import PostWritePage from "./board-project/pages/PostWritePage/PostWritePage";
-import PostUpdatePage from "./board-project/pages/PostUpdatePage/PostUpdatePage";
+import PostEditPage from "./board-project/pages/PostEditPage/PostEditPage";
 
 export default function App() {
   return (
@@ -20,7 +20,7 @@ export default function App() {
         <Route path="/posts/new" element={<PostWritePage />} />
 
         {/* 수정 */}
-        <Route path="/posts/:postId/edit" element={<PostUpdatePage />} />
+        <Route path="/posts/:postId/edit" element={<PostEditPage />} />
 
         {/* 그 외 경로: 모두 목록으로 */}
         <Route path="*" element={<Navigate to="/" replace />} />
