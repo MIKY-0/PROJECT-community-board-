@@ -25,6 +25,61 @@
   color: #666;
 }
 
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.authButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.welcomeText {
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.logoutBtn {
+  border: none;
+  background: #222;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.loginBtn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  text-decoration: none;
+  font-size: 14px;
+  color: #111827;
+  background: white;
+  transition: 0.2s;
+}
+
+.loginBtn:hover {
+  background: #cdcdcd;
+}
+
+.signupBtn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  color: white;
+  background: #111827;
+  transition: 0.2s;
+}
+
+.signupBtn:hover {
+  background: #374151;
+}
+
 /* 검색 */
 .searchBox {
   display: flex;

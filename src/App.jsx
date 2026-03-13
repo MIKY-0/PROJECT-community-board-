@@ -5,6 +5,8 @@ import PostDetailPage from "./board-project/pages/PostDetailPage/PostDetailPage"
 import BoardListPage from "./board-project/pages/BoardListPage/BoardListPage";
 import PostWritePage from "./board-project/pages/PostWritePage/PostWritePage";
 import PostEditPage from "./board-project/pages/PostEditPage/PostEditPage";
+import LoginPage from "./board-project/pages/LoginPage/LoginPage";
+import SignUpPage from "./board-project/pages/SignUpPage/SignUpPage";
 
 export default function App() {
   return (
@@ -21,6 +23,12 @@ export default function App() {
 
         {/* 수정 */}
         <Route path="/posts/:postId/edit" element={<PostEditPage />} />
+
+        {/* 로그인 */}
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* 회원가입 */}
+        <Route path="/signup" element={<SignUpPage />} />
 
         {/* 그 외 경로: 모두 목록으로 */}
         <Route path="*" element={<Navigate to="/" replace />} />

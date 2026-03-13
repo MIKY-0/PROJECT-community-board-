@@ -11,9 +11,15 @@ async function parseErrorMessage(res) {  // 이 함수는 쉽게말해 res객체
   } catch(e) { return "서버 에러 : " + res.status; } // res.json()하다가 에러가 생기면 그냥 기본 에러메시지 반환.
 }
 
+function getAuthHeader() {
+  const token = localStorage.getItem("accessToken");
+  return token ? {Authorization : `Bearer ${token}`} : {};
+}
 
 export async function getJson(path) { // Get요청 공통. (조회시 사용)
-  const res = await fetch(API_BASE + path); // Get요청 시 받는 응답.
+  const res = await fetch(API_BASE + path , {
+    headers : {...getAuthHeader()}
+  }); // Get요청 시 받는 응답.
 
   if(!res.ok) { // Get요청 실패시.(status : 400 , 404....)
     /* 
@@ -31,7 +37,7 @@ export async function getJson(path) { // Get요청 공통. (조회시 사용)
 export async function sendJson(path , method , body) { // POST , PUT , PATCH 요청 공통. 얘네들은 body가 필요.
   const res = await fetch(API_BASE + path , {
     method ,
-    headers : {"Content-Type" : "application/json"} ,
+    headers : {"Content-Type" : "application/json" , ...getAuthHeader()} ,
     body : body ? JSON.stringify(body) : undefined // body없으면 undefined. -> body없어도 가능하게 설계함.
     // -> 좋아요같은 기능은 body가 없으니까.
   });
@@ -40,14 +46,16 @@ export async function sendJson(path , method , body) { // POST , PUT , PATCH 요
     const message = await parseErrorMessage(res);
     throw new Error(message);
   }
-
-  return res.json();
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
+  
 }
 
 export async function deleteJson(path) { // DELETE 요청 시. -> sendJson에 같이 넣어도 되긴 하지만 
 // 직관적이게 작성하려고 따로 분리함. 내가 이해하기 쉬우려고.
   const res = await fetch(API_BASE + path , {
-    method : "DELETE"
+    method : "DELETE" ,
+    headers : {...getAuthHeader()}
   });
 
   if(!res.ok) {

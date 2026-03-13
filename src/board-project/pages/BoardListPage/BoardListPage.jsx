@@ -23,6 +23,21 @@ export default function BoardListPage() {
   const [loading , setLoading] = useState(false);
   const [error , setError] = useState("");
 
+  // 로그인했으면 nickname , 로그아웃 뜨도록.
+  const token = localStorage.getItem("accessToken");
+  const loginNickname = localStorage.getItem("loginNickname");
+  const isLogin = !!token;
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("loginUserId");
+    localStorage.removeItem("loginUsername");
+    localStorage.removeItem("loginNickname");
+
+    alert("로그아웃 되었습니다.");
+    window.location.reload();
+  };
+
   // 서버에서 목록 가져오기.
   useEffect( () => {
     const load = async () => {
@@ -60,6 +75,17 @@ export default function BoardListPage() {
       load();
     } , [page , query]); // page , query는 사용자가 요청하므로 바뀔때마다 실행.
   
+  const handleMoveWrite = () => { // 비로그인 상태에서 게시글 작성 방어.
+   const isLogin = !!localStorage.getItem("accessToken");
+
+    if (!isLogin) {
+      alert("로그인 후 게시글 작성이 가능합니다.");
+      navigate("/login");
+      return;
+    }
+    navigate("/posts/new");
+  };
+
   // 검색 버튼 누르면 1페이지로 , 검색 조건 확정.
   const onSearch = e => {
     e.preventDefault();
@@ -75,7 +101,24 @@ export default function BoardListPage() {
   return (
     <div className="boardWrap">
       <header className="boardHeader">
-        <h1 className="boardTitle">게시판</h1>
+        <div className="headerTop">
+          <h1 className="boardTitle">게시판</h1>
+          <div className="authButtons">
+            {isLogin ? (
+              <>
+              <span className="welcomeText">{loginNickname}님 환영합니다!</span>
+              <button className="logoutBtn" type="button" onClick={handleLogout}>로그아웃</button>
+              </>
+            )
+          :
+          (
+            <>
+            <Link className="loginBtn" to="/login">로그인</Link>
+            <Link className="signupBtn" to="/signup">회원가입</Link>
+            </>
+          )}
+          </div>
+        </div>
         <p className="boardSubtitle">
           게시글 메인화면임
         </p>
@@ -163,7 +206,7 @@ export default function BoardListPage() {
           </button>
         </div>
 
-        <Link className="writeBtn" to="/posts/new">
+        <Link className="writeBtn" type="button" onClick={handleMoveWrite}>
           게시글 작성하기
         </Link>
       </div>

@@ -1,0 +1,94 @@
+.authPage {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.authTop {
+  margin-bottom: 16px;
+}
+
+.authCard {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.authTitle {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.authSubtitle {
+  margin: 0 0 24px;
+  color: #6b7280;
+}
+
+.authForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.input {
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #111827;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.cancelBtn,
+.submitBtn,
+.backBtn {
+  height: 42px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.cancelBtn,
+.backBtn {
+  background: #e5e7eb;
+}
+
+.submitBtn {
+  background: #111827;
+  color: white;
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.authBottomText {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #6b7280;
+}

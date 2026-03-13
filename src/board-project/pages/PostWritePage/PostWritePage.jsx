@@ -12,8 +12,15 @@ export default function PostWritePage() {
 
   const handleSubmit = async (e) => { // 게시글 등록.
     e.preventDefault();
+    const isLogin = !!localStorage.getItem("accessToken");
     const trimmedTitle = title.trim();
     const trimmedContent = content.trim();
+
+    if(!isLogin) {
+      alert("로그인 후 게시글 작성이 가능합니다.");
+      navigate("/login");
+      return;
+    }
 
     if(!trimmedTitle) { // 프론트 1차검증.
       alert("제목을 입력하세요.");
@@ -23,6 +30,9 @@ export default function PostWritePage() {
       alert("내용을 입력하세요.");
       return;
     }
+
+    const ok = window.confirm("게시글을 등록하시겠습니까?");
+    if(!ok) return;
     
     setLoading(true);
     setError("");

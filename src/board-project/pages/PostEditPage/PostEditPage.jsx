@@ -35,6 +35,9 @@ export default function PostEditPage() {
 
     if(!trimmedTitle) { alert("제목을 입력하세요."); return; }
     if(!trimmedContent) { alert("내용을 입력하세요."); return; }
+
+    const ok = window.confirm("정말 게시글을 수정하시겠습니까?");
+    if(!ok) return;
     
     setSaving(true);
     setError("");
